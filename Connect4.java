@@ -1,8 +1,8 @@
-package thirtiethprogram;
+package Connect4;
 import java.util.Scanner;
 import java.util.Arrays;
 
-public class ThirtiethProgram {
+public class Connect4 {
     public static boolean isFinished = false;
     public static char currPlayer = 'x';
     public static char[][] table = new char[6][7];
