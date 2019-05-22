@@ -11,26 +11,38 @@ public class Connect4 {
         for (int i = 0; i < table.length; i++) { // fill table with blanks
             Arrays.fill(table[i], ' ');
         }
-        int previousColumn;
+        int previousColumn = 0, previousRow = -1;
         
         while(!isFinished) {
             printBoard();
             System.out.println(currPlayer + ": Which column? (1-7)");
             int column = 0;
+            boolean undo = true;
             while(column == 0) {
                 try {
+                    undo = true;
                     Scanner input = new Scanner(System.in);
                     if(input.hasNextInt()) {
                         column = input.nextInt();
                     } else {
-                        if(input.next().trim().toLowerCase().equals("u")) {
-                            // undo
+                        if(input.next().trim().toLowerCase().equals("u")) { 
+                            if(previousColumn > 0 && previousRow > -1) {
+                                table[previousRow][previousColumn-1] = ' ';
+                                System.out.println(currPlayer + ": Undid " + (currPlayer == 'x' ? 'o' : 'x')+ "'s move on column " + previousColumn + ", row " + (previousRow+1));
+                                printBoard();
+                                currPlayer = currPlayer == 'x' ? 'o' : 'x';
+                                System.out.println(currPlayer + ": Which column? (1-7)");
+                                previousColumn = -1;
+                                undo = false;
+                            } else {
+                                throw new ArithmeticException("No moves to undo. Can't undo moves too far back.");
+                            }
                         } else {
-                            throw new ArithmeticException("Unacceptable Input");
+                            throw new ArithmeticException("Unacceptable Input.");
                         }
                     }
                     if(column > 7 || column < 1) {
-                        throw new ArithmeticException("Not in range");
+                        throw new ArithmeticException("Not in range.");
                     }
                     try {
                         boolean acceptable = false;
@@ -38,6 +50,7 @@ public class Connect4 {
                             if(table[i][column-1] == ' ') {
                                 table[i][column-1] = currPlayer;
                                 acceptable = true;
+                                previousRow = i;
                                 break;
                             }
                         }
@@ -49,7 +62,9 @@ public class Connect4 {
                         column = 0;
                     }
                 } catch (Exception e) {
-                    System.out.println(currPlayer + ": Please enter a row from 1-7. Try again.");
+                    if(undo) {
+                        System.out.println(currPlayer + ": " + e.toString().substring(31, e.toString().length()));
+                    }
                     column = 0;
                 }
             }
@@ -60,7 +75,7 @@ public class Connect4 {
                 currPlayer = 'x';
             }
             
-            char winner = ' ', check = ' ';
+            char winner = ' ';
             for (int i = 0; i < table.length; i++) {
                 for (int j = 0; j < table[0].length; j++) {
                     if(table[i][j] != ' ') {
