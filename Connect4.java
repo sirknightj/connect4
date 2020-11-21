@@ -54,7 +54,7 @@ public class Connect4 {
                                 break;
                             }
                         }
-                        if(acceptable == false) {
+                        if(!acceptable) {
                             throw new ArithmeticException("Does not fit");
                         }
                     } catch (Exception e) {
